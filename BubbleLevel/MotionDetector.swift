@@ -47,4 +47,30 @@ class MotionDetector: ObservableObject {
             })
         }
     }
+    
+    func updateMotionData() {
+        if let data = motionManager.deviceMotion {
+            //MARK: TODO (roll, pitch) = currentOrientation.adjusted
+        }
+    }
+    
+    func stop() {
+        motionManager.stopDeviceMotionUpdates()
+        timer.invalidate()
+        if let orientationObserver = orientationObserver {
+            NotificationCenter.default.removeObserver(orientationObserver, name: notification, object: nil)
+        }
+        orientationObserver = nil
+    }
+    
+    deinit {
+        stop()
+    }
+}
+
+extension MotionDetector {
+    func started() -> MotionDetector {
+        start()
+        return self
+    }
 }
