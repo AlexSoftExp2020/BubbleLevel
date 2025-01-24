@@ -11,14 +11,24 @@ struct OrientationDataView: View {
     @EnvironmentObject var detector: MotionDetector
     
     var rollString: String {
-        //MARK: TODO detector.roll.describeAs
+        detector.roll.describedAsFixedLengthString()
     }
-    //MARK: TODO Continue
+    
+    var pitchString: String {
+        detector.pitch.describedAsFixedLengthString()
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text("Horizontal: " + rollString)
+                .font(.system(.body, design: .monospaced))
+            Text("Verical: " + pitchString)
+                .font(.system(.body, design: .monospaced))
+        }
     }
 }
 
 #Preview {
     OrientationDataView()
+        .environmentObject(MotionDetector(updateInterval: 0.01).started())
 }
