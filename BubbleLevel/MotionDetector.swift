@@ -43,14 +43,17 @@ class MotionDetector: ObservableObject {
             motionManager.startDeviceMotionUpdates()
             
             timer = Timer.scheduledTimer(withTimeInterval: updateInterval, repeats: true, block: { _ in
-            //MARK: TODO self.updateMotionData()
+                self.updateMotionData()
             })
+        } else {
+            print("Motion data isn't available on this device.")
         }
     }
     
     func updateMotionData() {
         if let data = motionManager.deviceMotion {
-            //MARK: TODO (roll, pitch) = currentOrientation.adjusted
+            (roll, pitch) = currentOrientation.adjustedRollAndPitch(data.attitude)
+            zAcceleration = data.userAcceleration.z
         }
     }
     
@@ -72,5 +75,24 @@ extension MotionDetector {
     func started() -> MotionDetector {
         start()
         return self
+    }
+}
+
+extension UIDeviceOrientation {
+    func adjustedRollAndPitch(_ attitude: CMAttitude) -> (roll: Double, pitch: Double) {
+        switch self {
+        case .unknown, .faceUp, .faceDown:
+            return (attitude.roll, -attitude.pitch)
+        case .landscapeLeft:
+            return (attitude.pitch, -attitude.roll)
+        case .portrait:
+            return (attitude.roll, attitude.pitch)
+        case .portraitUpsideDown:
+            return (-attitude.roll, -attitude.pitch)
+        case .landscapeRight:
+            return (-attitude.pitch, attitude.roll)
+        @unknown default:
+            return (attitude.roll, attitude.pitch)
+        }
     }
 }
