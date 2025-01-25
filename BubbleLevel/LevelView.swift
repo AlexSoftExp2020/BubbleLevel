@@ -13,7 +13,8 @@ struct LevelView: View {
     var body: some View {
         VStack {
             BubbleLevel()
-            OrientationDataView().padding(.top, 80)
+            OrientationDataView()
+                .padding(.top, 80)
         }
         .onAppear {
             motionDetector.start()
